@@ -10,6 +10,9 @@ import com.wizzy.Wizzy.Banking.Application.payload.response.APIResponse;
 import com.wizzy.Wizzy.Banking.Application.payload.response.BankResponse;
 import com.wizzy.Wizzy.Banking.Application.payload.response.JwtAuthResponse;
 import com.wizzy.Wizzy.Banking.Application.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -25,14 +28,26 @@ import java.util.UUID;
 import static com.wizzy.Wizzy.Banking.Application.util.AuthenticationUtils.applicationUrl;
 
 @RestController
-@RequestMapping("/api/v1/auth/")
+@RequestMapping("/api/v3/auth/")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "User Authentication Management APIs")
 public class AuthController {
 
     private final AuthService authService;
 
     private final RegistrationCompleteEventListener eventListener;
+
+
+    @Operation(
+            summary = "Create New UserAccount",
+            description = "This Api is used for creating a new user account"
+    )
+
+    @ApiResponse(
+            responseCode = "002",
+            description = "Account has been created successfully!"
+    )
 
     @PostMapping("register")
     public BankResponse createAccount(@Valid @RequestBody UserRequest userRequest){
@@ -41,10 +56,30 @@ public class AuthController {
     }
 
 
+    @Operation(
+            summary = "Login action",
+            description = "This API is used for login into an existing account"
+    )
+
+    @ApiResponse(
+            responseCode = "200",
+            description = "Login Successful"
+    )
     @PostMapping("login")
     public ResponseEntity<APIResponse<JwtAuthResponse>> login(@Valid @RequestBody LoginRequest loginRequest){
         return authService.login(loginRequest);
     }
+
+
+    @Operation(
+            summary = "Password Reset Request Action",
+            description = "This API is used for password reset request"
+    )
+
+    @ApiResponse(
+            responseCode = "200",
+            description = "Reset password link sent successfully!"
+    )
 
     @PostMapping("password-reset-request")
     public String resetPasswordRequest(@RequestBody ForgetPasswordRequest passwordRequest, final HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
@@ -72,6 +107,17 @@ public class AuthController {
 
         return url;
     }
+
+
+    @Operation(
+            summary = "Password Reset action",
+            description = "This API is used for Reset password"
+    )
+
+    @ApiResponse(
+            responseCode = "200",
+            description = "Password Reset Successful"
+    )
 
     @PostMapping("password-reset")
     public String resetPassword(@RequestBody ForgetPasswordRequest passwordRequest,
