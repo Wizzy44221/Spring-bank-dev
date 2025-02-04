@@ -11,12 +11,14 @@ import com.wizzy.Wizzy.Banking.Application.payload.response.APIResponse;
 import com.wizzy.Wizzy.Banking.Application.payload.response.AccountInfo;
 import com.wizzy.Wizzy.Banking.Application.payload.response.BankResponse;
 import com.wizzy.Wizzy.Banking.Application.payload.response.JwtAuthResponse;
+import com.wizzy.Wizzy.Banking.Application.repository.ForgetPasswordResetRepository;
 import com.wizzy.Wizzy.Banking.Application.repository.UserRepository;
 import com.wizzy.Wizzy.Banking.Application.service.AuthService;
 import com.wizzy.Wizzy.Banking.Application.service.EmailService;
 import com.wizzy.Wizzy.Banking.Application.service.NotificationService;
 import com.wizzy.Wizzy.Banking.Application.util.AccountUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +52,8 @@ public class AuthServiceImpl implements AuthService {
     private final NotificationService notificationService;
 
     private final HttpServletRequest request;
+
+    private final ForgetPasswordResetRepository passwordResetRepository;
 
 
     @Override
@@ -175,7 +179,7 @@ public class AuthServiceImpl implements AuthService {
                                         .id(userEntity.getId())
                                         .email(userEntity.getEmail())
                                         .gender(userEntity.getGender())
-                                        .firstName(userEntity.getLastName())
+                                        .firstName(userEntity.getFirstname())
                                         .lastName(userEntity.getLastName())
                                         .profilePicture(userEntity.getProfilePicture())
                                         .role(userEntity.getRole())
@@ -225,6 +229,15 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Optional<UserEntity> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+@Transactional
+    @Override
+    public void clearPasswordResetToken(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(()-> new RuntimeException("User not found"));
+
+        passwordResetRepository.deleteByUserEntity(user);
+
     }
 
 }

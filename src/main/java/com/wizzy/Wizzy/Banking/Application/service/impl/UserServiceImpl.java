@@ -11,6 +11,7 @@ import com.wizzy.Wizzy.Banking.Application.service.OtpService;
 import com.wizzy.Wizzy.Banking.Application.service.TransactionService;
 import com.wizzy.Wizzy.Banking.Application.service.UserService;
 import com.wizzy.Wizzy.Banking.Application.util.AccountUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
 
     private final OtpService otpService;
 
+    @Transactional
     @Override
     public BankResponse creditAccount(CreditAndDebitRequest request) {
 
@@ -86,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
 }
 
-
+    @Transactional
     @Override
     public BankResponse debitAccount(CreditAndDebitRequest request) {
 
@@ -196,6 +198,7 @@ public class UserServiceImpl implements UserService {
         return foundUser.getFirstname() + " " + foundUser.getLastName();
     }
 
+    @Transactional
     @Override
     public BankResponse transfer(TransferRequest request) {
 
@@ -260,6 +263,7 @@ public class UserServiceImpl implements UserService {
         return completeTransfer(sourceAccountUser, request);
     }
 
+    @Transactional
     private BankResponse completeTransfer(UserEntity sourceAccountUser, TransferRequest request) {
         sourceAccountUser.setAccountBalance(sourceAccountUser.getAccountBalance().subtract(request.getAmount()));
         userRepository.save(sourceAccountUser);

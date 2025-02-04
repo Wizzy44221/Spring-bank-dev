@@ -135,6 +135,8 @@ public class AuthController {
         if (theUser.isPresent()){
             authService.changePassword(theUser.get(), passwordRequest.getNewPassword());
 
+            authService.clearPasswordResetToken(theUser.get().getId());
+
             return "Password has been reset successfully";
         }
 

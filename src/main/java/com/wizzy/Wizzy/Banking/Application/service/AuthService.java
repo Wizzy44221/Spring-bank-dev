@@ -27,4 +27,6 @@ public interface AuthService {
     boolean oldPasswordIsValid(UserEntity userEntity, String oldPassword);
 
     Optional<UserEntity> findByEmail(String email);
+
+    void clearPasswordResetToken(Long userId);
 }
