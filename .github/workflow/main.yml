@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-deploy:
-    name: Build and Deploy Banking Application for a client
+    name: Build and Deploy Banking Application for  clients
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
